@@ -52,7 +52,7 @@ const getMaterialsOfCourses = async (sessionKey, courses) => {
   try {
     if (!courses || !courses.length) return [];
 
-    const fetchPromises = courses.map(async (course) => {
+    const fetchPromises = await Promise.all(courses.map(async (course) => {
       try {
         const url = `https://moodle.arq.ifsp.edu.br/lib/ajax/service.php?sesskey=${sessionKey}&info=core_courseformat_get_state`;
         const objBody = [{
@@ -70,14 +70,14 @@ const getMaterialsOfCourses = async (sessionKey, courses) => {
         });
 
         const data = await response.json();
-        const dataCourse = data[0].data;
+        const dataCourse = JSON.parse(data[0].data);
 
         return { ...course, materials: dataCourse };
       } catch (error) {
         console.error(`Erro ao buscar materiais do curso ${course.id}:`, error);
         return { courseId: course.id, materials: [] };
       }
-    });
+    }));
 
     return fetchPromises;
 
@@ -93,7 +93,6 @@ const main = async () => {
 
     // 2º Passo - Coletar os Cursos
     const courses = await getCourses(sessionKey);
-    console.log(courses);
 
     // 3º Passo - Coletar os Materiais de Cada Curso
     const coursesWithMaterials = await getMaterialsOfCourses(sessionKey, courses);
