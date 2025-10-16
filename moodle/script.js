@@ -99,8 +99,11 @@ const main = async () => {
     console.log(coursesWithMaterials);
 
     // 4º Passo - Armazenar essas informações
+    
 
     // 5º Passo - Redirecionar para plataforma
+
+    alert("Dados coletados com sucesso, redirecionando para plataforma...")
 
   } catch (error) {
     console.error(error);
